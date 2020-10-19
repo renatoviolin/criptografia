@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+    </script>
+
+
+    <title>Exemplo Criptografia</title>
+</head>
+<style>
+    h2 {
+        background: #0B50A0;
+        padding: 5px;
+        color: #fff;
+        border-radius: 2px;
+        text-align: center;
+    }
+
+    h2.desc {
+        background: rgb(202, 91, 0);
+    }
+
+    .div-res {
+        border: solid 0.5px #999;
+        border-radius: 4px;
+        padding: 10px;
+        word-wrap: anywhere;
+    }
+</style>
+
+<body>
+    <div class="container">
+
+        <h2>Criptografando</h2>
+        <div class="form-group">
+            <label>Texto para criptografar</label>
+            <textarea class="form-control" id="texto_original" rows="5"></textarea>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-8">
+                <label>Chave de criptografia</label>
+                <input type="text" class="form-control" id="chave_original">
+            </div>
+            <div class="col-md-4">
+                <label>&nbsp;</label>
+                <button class="btn btn-success btn-block" id="btn_cripto">Criptografar</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="">Resultado</label>
+            <div class="div-res" id="txt_result_cripto"></div>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <h2 class="desc">Descriptografando</h2>
+        <div class="form-group">
+            <label>Texto cifrado</label>
+            <textarea class="form-control" id="texto_dec" rows="5"></textarea>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-8">
+                <label>Chave para decifrar</label>
+                <input type="text" class="form-control" id="chave_dec">
+            </div>
+            <div class="col-md-4">
+                <label>&nbsp;</label>
+                <button class="btn btn-info btn-block" id="btn_dec">Decifrar</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Resultado</label>
+            <div class="div-res" id="txt_result_dec"></div>
+        </div>
+
+
+    </div>
+</body>
+<script>
+    function asc_to_int(a) {
+        return a.charCodeAt(0);
+    }
+
+    function int_to_asc(a) {
+        return String.fromCharCode(a);
+    }
+
+    const add = (a, b) =>
+        a + b
+
+    function encode(chave, msg) {
+        msg_int = msg.split('').map(asc_to_int);
+        chave_int = chave.split('').map(asc_to_int);
+        sum = chave_int.reduce(add)
+        c = sum % 255
+
+        var aux = []
+        for (i = 0; i < msg_int.length; i++) {
+            n = 31 + (msg_int[i] + c) % 255
+            aux.push(n)
+        }
+
+        return aux.map(int_to_asc).join('')
+    }
+
+    function decode(chave, msg) {
+        msg_int = msg.split('').map(asc_to_int);
+        chave_int = chave.split('').map(asc_to_int);
+        sum = chave_int.reduce(add)
+        c = sum % 255
+
+        var aux = []
+        for (i = 0; i < msg_int.length; i++) {
+            n = msg_int[i] - 31 - c
+            if (n < 31)
+                n += 255
+            aux.push(n)
+        }
+
+        return aux.map(int_to_asc).join('')
+    }
+
+    $('#btn_cripto').on('click', function () {
+        texto_original = $('#texto_original').val()
+        chave_original = $('#chave_original').val()
+        result = encode(chave_original, texto_original)
+        $('#txt_result_cripto').text(result)
+    })
+
+    $('#btn_dec').on('click', function () {
+        texto = $('#texto_dec').val()
+        chave = $('#chave_dec').val()
+        result = decode(chave, texto)
+        $('#txt_result_dec').text(result)
+    })
+</script>
+
+</html>
